@@ -1,0 +1,4 @@
+// https://stackoverflow.com/a/66984354/14862313
+{
+    "presets": ["@babel/preset-env", "@babel/preset-react"]
+}
