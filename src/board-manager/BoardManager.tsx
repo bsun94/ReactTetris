@@ -5,13 +5,12 @@ import DefaultPieceManager, {
 } from "../active-piece/PieceManager";
 import { TetrisBoard } from "../board-renderer/BoardRenderer";
 import { Coordinates } from "../common/available_pieces";
+import GameStateManager from "../game-state-manager/GameStateManager";
 
 /**
  * The shape of a component that manages various aspects of a tetris game board.
  */
 export interface BoardManager {
-  linesRemovedFromBoard: number;
-
   /**
    * Spawns a new Tetris piece for the user to control.
    *
@@ -35,17 +34,13 @@ export interface BoardManager {
 /** Default implementation of a manager for the Tetris board. */
 export default class DefaultBoardManager implements BoardManager {
   private readonly pieceManager: PieceManager;
+  private readonly gameStateManager = GameStateManager.getGameStateManager();
   private currentActivePiece?: ActivePiece;
   private board: TetrisBoard;
   private spawnPoint: Coordinates;
-  private linesRemovedFromBoardInternal = 0;
 
   /** Blocks operations on active piece during turn init/transitions. */
   private pausePieceOperations = true;
-
-  public get linesRemovedFromBoard() {
-    return this.linesRemovedFromBoardInternal;
-  }
 
   constructor(
     board: TetrisBoard,
@@ -72,13 +67,14 @@ export default class DefaultBoardManager implements BoardManager {
           error.message ===
           PieceManagerErrors.ON_INIT_ACTIVE_PIECE_OUT_OF_BOUNDS
         ) {
-          throw new Error();
+          throw new Error(
+            "New piece is out of bounds on init; reconfigure the spawn point!"
+          );
         } else if (
           error.message ===
           PieceManagerErrors.ON_INIT_ACTIVE_PIECE_COLLIDES_WITH_EXISTING_PARTICLES
         ) {
-          // emit game lost
-          throw new Error("Game over");
+          this.gameStateManager.setBoardOverflowed(true);
         }
       }
     }
@@ -183,8 +179,8 @@ export default class DefaultBoardManager implements BoardManager {
     for (const rowIndex of rowIndicesToRemove) {
       const [removedArr] = this.board.board.splice(rowIndex, 1);
       const removedArrLen = removedArr.length;
-      this.linesRemovedFromBoardInternal++;
       this.board.board.unshift(Array(removedArrLen).fill(false));
+      this.gameStateManager.incrementRowsCleared(1);
     }
     this.initTurn();
   }

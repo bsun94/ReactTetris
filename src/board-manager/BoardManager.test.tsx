@@ -1,5 +1,7 @@
+import GameStateManager from "../game-state-manager/GameStateManager";
 import DefaultBoardManager, { BoardManager } from "./BoardManager";
 import { TetrisBoard } from "../board-renderer/BoardRenderer";
+import exp from "constants";
 
 jest.mock("../common/available_pieces", () => {
   const originalModule = jest.requireActual("../common/available_pieces");
@@ -9,6 +11,26 @@ jest.mock("../common/available_pieces", () => {
   };
 });
 const availablePieces = require("../common/available_pieces");
+
+// We could've just gotten the singleton from the GameStateManager itself, but just trying out
+// mocking modules with Jest.
+jest.mock("../game-state-manager/GameStateManager", () => {
+  const originalModule = jest.requireActual(
+    "../game-state-manager/GameStateManager"
+  );
+  const mockGameStateManagerMembers = {
+    setBoardOverflowed: jest.fn(),
+    incrementRowsCleared: jest.fn(),
+  };
+  return {
+    __esModule: true,
+    ...originalModule,
+    default: {
+      getGameStateManager: () => mockGameStateManagerMembers,
+    },
+  };
+});
+const gameStateManagerMock = require("../common/available_pieces");
 
 describe("when initializing a turn", () => {
   let defaultBoardManager: BoardManager;
@@ -30,7 +52,7 @@ describe("when initializing a turn", () => {
   });
 
   afterEach(() => {
-    availablePieces.getRandomPiece.mockReset();
+    jest.resetAllMocks();
   });
 
   it("should not affect board state if init not run", () => {
@@ -61,6 +83,22 @@ describe("when initializing a turn", () => {
       [false, false, false, false],
     ];
     expect(board.board).toEqual(postOpBoard);
+  });
+
+  it("should signal if the board has overflown", () => {
+    testBoard = {
+      board: [
+        [false, false, false, false],
+        [false, true, true, false],
+        [false, true, true, false],
+        [false, true, true, false],
+      ],
+    };
+    defaultBoardManager = new DefaultBoardManager(testBoard, [1, 0]);
+    defaultBoardManager.initTurn();
+    const gameStateMock = GameStateManager.getGameStateManager();
+    expect(gameStateMock.setBoardOverflowed).toHaveBeenCalledTimes(1);
+    expect(gameStateMock.setBoardOverflowed).toHaveBeenCalledWith(true);
   });
 });
 
@@ -403,7 +441,8 @@ describe("when ticking a piece down", () => {
       [true, true, false, false],
     ];
     expect(testBoard.board).toEqual(newBoard);
-    expect(defaultBoardManager.linesRemovedFromBoard).toEqual(1);
+    const gameStateMock = GameStateManager.getGameStateManager();
+    expect(gameStateMock.incrementRowsCleared).toHaveBeenCalledTimes(1);
   });
 
   it("should remove multiple full rows, updating count", () => {
@@ -442,6 +481,7 @@ describe("when ticking a piece down", () => {
       [false, false, false, false],
     ];
     expect(testBoard).toEqual(newBoard);
-    expect(defaultBoardManager.linesRemovedFromBoard).toEqual(2);
+    const gameStateMock = GameStateManager.getGameStateManager();
+    expect(gameStateMock.incrementRowsCleared).toHaveBeenCalledTimes(2);
   });
 });
