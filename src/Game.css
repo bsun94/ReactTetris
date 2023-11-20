@@ -1,0 +1,49 @@
+#game-score {
+    position: absolute;
+    padding: 10px;
+    right: 25%;
+    top: 5%;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: 16px;
+    border: 2px solid black;
+}
+
+.game-state-dialog {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    /* So that children aren't automatically stretched. */
+    align-items: center;
+    /* This is contained within React's root, which is only as high as the content. */
+    height: 100px;
+    width: 20%;
+    margin-top: 15%;    
+    margin-left: auto;
+    margin-right: auto;
+    border: 2px solid black;
+    padding: 10px;
+}
+
+.game-state-dialog .game-state-text {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: 16px;
+}
+
+.game-state-dialog .play-again-button {
+    height: 35px;
+    width: 50%;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    background-color: blue;
+    border: none;
+    border-radius: 5px;
+}
+
+.game-state-dialog .play-again-button:hover {
+    cursor: pointer;
+    color: blue;
+    background-color: white;
+    border: 3px solid blue;
+}

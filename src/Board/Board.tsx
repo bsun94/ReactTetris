@@ -27,9 +27,9 @@ export default function Board({
   // setXXX functions go off of object references - if you mutate the object instead of
   // passing in a new one, setXXX won't actually trigger renders as it should.
   const [board, setBoard] = useState(getPlayingBoard(width, depth));
-  const [boardManager] = useState(
+  const boardManager = useRef(
     new DefaultBoardManager({ board }, [spawnPointX, spawnPointY])
-  );
+  ).current;
   // This has to be a useRef; if useState, during the double useEffect run mentioned below, state
   // is not immediately updated - it behaves in the "snapshot" way React docs describes and we
   // double init the board's active piece.
