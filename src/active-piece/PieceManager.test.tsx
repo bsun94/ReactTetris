@@ -10,7 +10,6 @@ jest.mock("../common/available_pieces", () => {
 });
 const availablePieces = require("../common/available_pieces");
 
-// TODO: try using a debugger for errors here
 describe("when creating a new piece", () => {
   let activePieceManager: DefaultPieceManager;
   const testBoard = {

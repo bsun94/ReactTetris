@@ -4,7 +4,6 @@ import "./BoardRenderer.css";
 
 /** Structure of a tetris board definition that the board renderer can read. */
 export interface TetrisBoard {
-  // TODO: change to allow rendering of different colours? Colour enum?
   board: boolean[][];
 }
 
@@ -12,7 +11,6 @@ const boardRendererCssPrefix = "board-renderer";
 
 /** Component that renders the given grid-defined tetris board. */
 export default function BoardRenderer({ board }: TetrisBoard) {
-  // TODO: introducing caching of these so we don't regenerate the entire board all the time.
   const numBoardCols = board[0].length ?? 0;
   const numBoardRows = board.length ?? 0;
 
@@ -39,7 +37,6 @@ export default function BoardRenderer({ board }: TetrisBoard) {
   );
 }
 
-// TODO: class names to accommodate colours??
 function getUnfilledGridCell(id: number) {
   return <div key={id} className={getBaseGridCellClassName()} />;
 }

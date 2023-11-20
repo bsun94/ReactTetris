@@ -142,8 +142,6 @@ export default class DefaultBoardManager implements BoardManager {
           "Initalize a turn first before operating on the board!"
         );
       }
-      // TODO: consider whether or not having a "shadow" board would be better than this repainting
-      // in case of invalid move - original intent.
       this.drawOrErasePiece(this.currentActivePiece, true);
       const newPiece = updateBoardFn(this.currentActivePiece, this.board);
       if (!!newPiece) {

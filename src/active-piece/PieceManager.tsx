@@ -113,8 +113,8 @@ export default class DefaultPieceManager implements PieceManager {
 
   rotateLeft(piece: ActivePiece, board: TetrisBoard): ActivePiece | null {
     const { anchorPoint, pieceBody } = piece;
-    const transformedBodyBlocks = this.normalizeRelativeCoords(
-      this.invertCoords(this.reflectAlongXAxis(pieceBody))
+    const transformedBodyBlocks = this.invertCoords(
+      this.reflectAlongXAxis(pieceBody)
     );
     const potentialNewPiece = { anchorPoint, pieceBody: transformedBodyBlocks };
     return this.returnPieceIfAllowed(potentialNewPiece, board);
@@ -122,8 +122,8 @@ export default class DefaultPieceManager implements PieceManager {
 
   rotateRight(piece: ActivePiece, board: TetrisBoard): ActivePiece | null {
     const { anchorPoint, pieceBody } = piece;
-    const transformedBodyBlocks = this.normalizeRelativeCoords(
-      this.reflectAlongXAxis(this.invertCoords(pieceBody))
+    const transformedBodyBlocks = this.reflectAlongXAxis(
+      this.invertCoords(pieceBody)
     );
     const potentialNewPiece = { anchorPoint, pieceBody: transformedBodyBlocks };
     return this.returnPieceIfAllowed(potentialNewPiece, board);
@@ -131,9 +131,7 @@ export default class DefaultPieceManager implements PieceManager {
 
   flipHorizontally(piece: ActivePiece, board: TetrisBoard): ActivePiece | null {
     const { anchorPoint, pieceBody } = piece;
-    const transformedBodyBlocks = this.normalizeRelativeCoords(
-      this.reflectAlongYAxis(pieceBody)
-    );
+    const transformedBodyBlocks = this.reflectAlongYAxis(pieceBody);
     const potentialNewPiece = { anchorPoint, pieceBody: transformedBodyBlocks };
     return this.returnPieceIfAllowed(potentialNewPiece, board);
   }
@@ -227,26 +225,22 @@ export default class DefaultPieceManager implements PieceManager {
     return false;
   }
 
-  // TODO: is it more user-friendly to just normalize the coords in each of the functions?
-  // Normalized the returned coords from this!
   private invertCoords(
     coords: Array<[number, number]>
   ): Array<[number, number]> {
-    return coords.map(([x, y]) => [y, x]);
+    return this.normalizeRelativeCoords(coords.map(([x, y]) => [y, x]));
   }
 
-  // Normalized the returned coords from this!
   private reflectAlongXAxis(
     coords: Array<[number, number]>
   ): Array<[number, number]> {
-    return coords.map(([x, y]) => [x, -y]);
+    return this.normalizeRelativeCoords(coords.map(([x, y]) => [x, -y]));
   }
 
-  // Normalized the returned coords from this!
   private reflectAlongYAxis(
     coords: Array<[number, number]>
   ): Array<[number, number]> {
-    return coords.map(([x, y]) => [-x, y]);
+    return this.normalizeRelativeCoords(coords.map(([x, y]) => [-x, y]));
   }
 
   /**
